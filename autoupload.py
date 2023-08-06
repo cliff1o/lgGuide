@@ -4,6 +4,8 @@ import time
 from git import Repo
 import os
 import subprocess
+import shutil
+import sched
 
 # Find the directory of the running script
 script_dir = os.path.dirname(os.path.realpath(__file__))
@@ -14,21 +16,34 @@ dirfile = os.path.join(script_dir, 'monitor')
 if not os.path.exists(dirfile):
     os.makedirs(dirfile)
 
+# Command init 
+# git init      
+# git config --global user.name "upload"   
+# git config --global user.email "your.email@example.com"    
+# git remote add lgGuide https://github.com/cliff1o/lgGuide.git
+
 def pushgit(ccpath):
-    # if(".git" in ccpath):
-    #     print(1);
-    # else:
+
+    # 检查目录是否为空或只包含 .git 目录
+    if not os.listdir(dirfile) or set(os.listdir(dirfile)) == {'.git'}:
+        print("Directory is empty, nothing to commit.")
+        return
+
+    # 检查 .git/index.lock 文件是否存在。如果存在，等待一段时间，然后再尝试提交
+    if os.path.exists(os.path.join(dirfile, '.git', 'index.lock')):
+        print("Git is busy, waiting...")
+        time.sleep(10)
+
+    try:
+        subprocess.check_output(['git', '-C', dirfile, 'add', '--all'])
         try:
-            subprocess.check_output(['git', '-C', dirfile, 'add', '--all'])
             subprocess.check_output(['git', '-C', dirfile, 'commit', '-m', 'auto update'])
-            try:
-                output = subprocess.check_output(['git', '-C', dirfile, 'push'])
-            except subprocess.CalledProcessError:
-                # 如果 push 失败，尝试设置上游分支并再次 push
-                subprocess.check_output(['git', '-C', dirfile, 'push', '--set-upstream', 'lgGuide', 'master'])
-            print("Successful push!")
-        except subprocess.CalledProcessError as e:
-            print("Error during push: " + str(e.output))
+        except subprocess.CalledProcessError:
+            # 如果 commit 失败（可能是因为没有任何改变），尝试设置上游分支并再次 push
+            subprocess.check_output(['git', '-C', dirfile, 'push', '--set-upstream', 'lgGuide', 'master'])
+        print("Successful push!")
+    except subprocess.CalledProcessError as e:
+        print("Error during push: " + str(e.output))
         
 
 class FileEventHandler(FileSystemEventHandler):
@@ -64,13 +79,42 @@ class FileEventHandler(FileSystemEventHandler):
             print("file modified:{0}".format(event.src_path))
     
           
+# 源文件夹和目标文件夹
+src_folders = ['C:\\Project\\CS1.6\\cdn\\CS1.6\\Boss\\sound\\as_resident_evil']
+
+
+# 创建一个调度器对象
+s = sched.scheduler(time.time, time.sleep)
+
+def copy_files(sc):
+    for src_folder in src_folders:
+        for filename in os.listdir(src_folder):
+            src_file = os.path.join(src_folder, filename)
+            target_file = os.path.join(dirfile, filename)
+
+            # 检查文件的修改时间，如果文件的修改时间大于一天，就跳过
+            if os.path.exists(target_file) and time.time() - os.path.getmtime(src_file) > 24*60*60:
+                continue
+
+            # 复制文件
+            shutil.copy2(src_file, target_file)
+
+    # 调度下一次复制操作，30分钟后
+    s.enter(30*60, 1, copy_files, (sc,))
+
+
 
 if __name__ == "__main__":
+    # 调用函数，初始化 Git
+
     observer = Observer()
     event_handler = FileEventHandler()
     observer.schedule(event_handler, dirfile,True)
     # 需要检测的文件目录
     observer.start()
+    # 调度第一次复制操作，立即执行
+    s.enter(0, 1, copy_files, (s,))
+    s.run()
     try:
         while True:
             time.sleep(1)
