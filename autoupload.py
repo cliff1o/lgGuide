@@ -21,7 +21,11 @@ def pushgit(ccpath):
         try:
             subprocess.check_output(['git', '-C', dirfile, 'add', '--all'])
             subprocess.check_output(['git', '-C', dirfile, 'commit', '-m', 'auto update'])
-            output = subprocess.check_output(['git', '-C', dirfile, 'push'])
+            try:
+                output = subprocess.check_output(['git', '-C', dirfile, 'push'])
+            except subprocess.CalledProcessError:
+                # 如果 push 失败，尝试设置上游分支并再次 push
+                subprocess.check_output(['git', '-C', dirfile, 'push', '--set-upstream', 'origin', 'master'])
             print("Successful push!")
         except subprocess.CalledProcessError as e:
             print("Error during push: " + str(e.output))
