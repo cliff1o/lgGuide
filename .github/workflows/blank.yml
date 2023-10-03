@@ -1,0 +1,32 @@
+# This is a basic workflow to help you get started with Actions
+
+name: Sync to GitCode
+
+# Controls when the workflow will run
+on:
+  # Triggers the workflow on push or pull request events but only for the "main" branch
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Push to GitCode
+      run: |
+        git config --global user.name "GitHub Action"
+        git config --global user.email "action@github.com"
+        GITCODE_USERNAME_ENCODED=$(echo -n "${{ secrets.GITCODE_USERNAME }}" | jq -sRr @uri)
+        GITCODE_PASSWORD_ENCODED=$(echo -n "${{ secrets.GITCODE_PASSWORD }}" | jq -sRr @uri)
+        git remote add gitcode https://$GITCODE_USERNAME_ENCODED:$GITCODE_PASSWORD_ENCODED@gitcode.net/2301_79002849/lgGuide.git
+        git fetch gitcode main
+        git rebase --strategy-option ours gitcode/main
+        git push gitcode HEAD:main
+        
