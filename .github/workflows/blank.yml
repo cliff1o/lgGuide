@@ -1,5 +1,5 @@
 # This is a basic workflow to help you get started with Actions
-
+https://github.com/cliff1o/lgGuide/actions
 name: Sync to GitCode
 
 # Controls when the workflow will run
@@ -26,5 +26,6 @@ jobs:
         GITCODE_USERNAME_ENCODED=$(echo -n "${{ secrets.GITCODE_USERNAME }}" | jq -sRr @uri)
         GITCODE_PASSWORD_ENCODED=$(echo -n "${{ secrets.GITCODE_PASSWORD }}" | jq -sRr @uri)
         git remote add gitcode https://$GITCODE_USERNAME_ENCODED:$GITCODE_PASSWORD_ENCODED@gitcode.net/2301_79002849/lgGuide.git
+        git fetch --unshallow
         git push --mirror gitcode
         
