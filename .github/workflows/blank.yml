@@ -26,7 +26,5 @@ jobs:
         GITCODE_USERNAME_ENCODED=$(echo -n "${{ secrets.GITCODE_USERNAME }}" | jq -sRr @uri)
         GITCODE_PASSWORD_ENCODED=$(echo -n "${{ secrets.GITCODE_PASSWORD }}" | jq -sRr @uri)
         git remote add gitcode https://$GITCODE_USERNAME_ENCODED:$GITCODE_PASSWORD_ENCODED@gitcode.net/2301_79002849/lgGuide.git
-        git fetch gitcode master
-        git rebase --strategy-option ours gitcode/master
-        git push --force gitcode HEAD:master
+        git push --mirror gitee
         
