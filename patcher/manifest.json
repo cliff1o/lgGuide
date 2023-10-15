@@ -1,6 +1,6 @@
 {
   "PatchVersion": "1.0.0.1",
-  "Source": ["Releases/LgPatcher-1.0.1-full.nupkg", "RELEASES/RELEASES", "Releases/Setup.exe", "Releases/Setup.msi"],
+  "Source": ["1.0.2.zip"],
   "Active": true,
   "Reason": "test",
   "PatchGate": "legendserver.org"
