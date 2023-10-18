@@ -1,5 +1,5 @@
 {
-  "PatchVersion": "1.0.0.3",
+  "PatchVersion": "1.0.3.0",
   "Source": ["Releases/1.0.3.zip"],
   "Active": true,
   "Reason": "test",
