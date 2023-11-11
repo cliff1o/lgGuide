@@ -1,6 +1,6 @@
 {
-  "PatchVersion": "1.0.8.0",
-  "Source": ["Releases/1.0.8.zip"],
+  "PatchVersion": "1.0.9.0",
+  "Source": ["Releases/1.0.9.zip"],
   "Active": true,
   "Reason": "test",
   "PatchGate": "legendserver.org"
