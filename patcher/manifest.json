@@ -3,5 +3,6 @@
   "Source": ["Releases/1.1.2.zip"],
   "Active": true,
   "Reason": "test",
-  "PatchGate": "legendserver.org"
+  "PatchGate": "legendserver.org",
+  "GateWay":"http://s6.yxsjmc.cn:10000/api/"
 }
