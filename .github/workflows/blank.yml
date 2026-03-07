@@ -28,7 +28,7 @@ jobs:
           USER_ENC=$(printf '%s' "$GITEE_USERNAME" | jq -sRr @uri)
           TOKEN_ENC=$(printf '%s' "$GITEE_TOKEN" | jq -sRr @uri)
 
-          git remote remove gitee 2>/dev/null || true
+          git remote remove gitee 2>/dev/null || true 
           git remote add gitee "https://${USER_ENC}:${TOKEN_ENC}@gitee.com/clifflo/lgresource.git"
 
           git push --force gitee HEAD:master
