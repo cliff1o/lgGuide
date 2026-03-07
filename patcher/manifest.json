@@ -1,8 +1,8 @@
 {
-  "PatchVersion": "1.1.7.0",
-  "Source": ["Releases/1.1.7.zip"],
+  "PatchVersion": "1.1.8.0",
+  "Source": ["Releases/1.1.8.zip"],
   "Active": true,
   "Reason": "test",
   "PatchGate": "legendserver.org",
-  "GateWay":"http://s6.yxsjmc.cn:10000/api/"
+  "GateWay":"http://s11-1.yxsjmc.cn:10003/api/"
 }
