@@ -8,6 +8,7 @@ on:
 jobs:
   sync:
     runs-on: ubuntu-latest
+    timeout-minutes: 15
 
     steps:
       - name: Checkout
@@ -19,8 +20,9 @@ jobs:
         env:
           GITCODE_USERNAME: ${{ secrets.GITCODE_USERNAME }}
           GITCODE_TOKEN: ${{ secrets.GITCODE_TOKEN }}
+          GIT_TERMINAL_PROMPT: 0
         run: |
-          set -e
+          set -euxo pipefail
 
           git config --global user.name "github-actions[bot]"
           git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
@@ -31,4 +33,17 @@ jobs:
           git remote remove gitcode 2>/dev/null || true
           git remote add gitcode "https://${USER_ENC}:${TOKEN_ENC}@gitcode.com/2301_79002849/lgGuide.git"
 
-          git push --force gitcode HEAD:master
+          echo "=== remotes ==="
+          git remote -v
+
+          echo "=== current branch ==="
+          git branch --show-current || true
+
+          echo "=== last commit ==="
+          git log -1 --oneline
+
+          echo "=== test remote access ==="
+          git ls-remote gitcode
+
+          echo "=== start push ==="
+          git push --progress --verbose --force gitcode HEAD:master
