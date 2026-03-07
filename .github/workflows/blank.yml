@@ -27,6 +27,11 @@ jobs:
           git config --global user.name "github-actions[bot]"
           git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
+          # 減少/延後 chunked upload
+          git config --global http.version HTTP/1.1
+          git config --global http.postBuffer 524288000
+          git config --global core.compression 0
+    
           USER_ENC=$(printf '%s' "$GITCODE_USERNAME" | jq -sRr @uri)
           TOKEN_ENC=$(printf '%s' "$GITCODE_TOKEN" | jq -sRr @uri)
 
