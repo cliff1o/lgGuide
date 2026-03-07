@@ -1,33 +1,34 @@
-# This is a basic workflow to help you get started with Actions
+name: Sync to Gitee
 
-name: Sync to GitCode
-
-# Controls when the workflow will run
 on:
-  # Triggers the workflow on push or pull request events but only for the "main" branch
   push:
     branches: [ "main" ]
-  pull_request:
-    branches: [ "main" ]
-
-  # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
 
-
 jobs:
-  build:
+  sync:
     runs-on: ubuntu-latest
+
     steps:
-    - uses: actions/checkout@v2
-    - name: Push to GitCode
-      run: |
-        git config --global user.name "GitHub Action2"
-        git config --global user.email "action@github.com"
-        GITCODE_USERNAME_ENCODED=$(echo -n "${{ secrets.GITCODE_USERNAME }}" | jq -sRr @uri)
-        GITCODE_PASSWORD_ENCODED=$(echo -n "${{ secrets.GITCODE_PASSWORD }}" | jq -sRr @uri)
-        git remote add gitcode https://$GITCODE_USERNAME_ENCODED:$GITCODE_PASSWORD_ENCODED@gitcode.net/2301_79002849/lgGuide.git
-        git fetch --unshallow
-        git fetch gitcode master
-        git rebase --strategy-option ours gitcode/master
-        git push --force gitcode HEAD:master
-        
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Push to Gitee
+        env:
+          GITEE_USERNAME: ${{ secrets.GITEE_USERNAME }}
+          GITEE_TOKEN: ${{ secrets.GITEE_TOKEN }}
+        run: |
+          set -e
+
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          USER_ENC=$(printf '%s' "$GITEE_USERNAME" | jq -sRr @uri)
+          TOKEN_ENC=$(printf '%s' "$GITEE_TOKEN" | jq -sRr @uri)
+
+          git remote remove gitee 2>/dev/null || true
+          git remote add gitee "https://${USER_ENC}:${TOKEN_ENC}@gitee.com/clifflo/lgresource.git"
+
+          git push --force gitee HEAD:master
