@@ -51,4 +51,4 @@ jobs:
           git ls-remote gitcode
 
           echo "=== start push ==="
-          git push --progress --verbose --force gitcode HEAD:master
+          git push --progress --verbose --force gitcode HEAD:main
